@@ -1,0 +1,57 @@
+<project name="UITesting" default="all" basedir=".">
+
+  <description>UI Testing ant build file</description>
+
+  <!-- set global properties for this build -->
+  <property name="project.homedir" location="."/>
+  <property name="package.name" value="UITesting"/>
+
+  <property name="java.package" value="testsuite"/>
+  <property name="output.dir" location="target"/>
+
+  <property name="idl.package.prefix" value="-pkgPrefix common ${java.package}"/>
+
+  <path id="classpath">
+      <path path="${project.homedir}/lib/junit-4.10.jar"/>
+      <path path="${project.homedir}/lib/selenium-server-standalone-2.35.0.jar"/>
+      <path path="${project.homedir}/lib/UITesting.jar"/>
+  </path>
+
+  <target name="all" depends="clean, compile,create-jar" description="generate the distribution">
+    <antcall target="create-jar"/>
+  </target>
+
+  <target name="compile-and-jar" depends="compile" description="generate the distribution">
+    <antcall target="create-jar"/>
+  </target>
+
+  <target name="create-jar">
+    <jar jarfile="${project.homedir}/lib/${package.name}.jar" basedir="${project.homedir}/classes">
+      <fileset dir="${project.homedir}/classes">
+        <include name="**"/>
+      </fileset>
+      <fileset dir="${project.homedir}/lib">
+        <include name="log4j-1.2.15.jar"/>
+      </fileset>
+      <manifest>
+        <attribute name="Main-Class" value="main.Main"/>
+        <attribute name="Class-Path" value="log4j-1.2.15.jar"/>
+      </manifest>
+    </jar>
+  </target>
+
+  <target name="compile" description="Compile all generated and other java files">
+    <mkdir dir="${project.homedir}/classes"/>
+    <!--<javac destdir="${project.homedir}/classes" debug="on">-->
+	<javac srcdir="${project.homedir}/src" destdir="${project.homedir}/classes">  
+      <src path="${project.homedir}/lib"/>
+      <classpath refid="classpath"/>
+    </javac>
+  </target>
+
+  <target name="clean" description="clean build">
+    <delete dir="${project.homedir}/classes"/>
+    <delete file="${project.homedir}/lib/${package.name}.jar"/>
+  </target>
+
+</project>
